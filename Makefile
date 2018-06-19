@@ -683,7 +683,8 @@ EVAL_SRC+=$(SEQUENCE_TRAINING_LIB_SRC)
 EVAL_OBJ:=\
 	$(patsubst %.cu, $(OBJDIR)/%.o, $(filter %.cu, $(EVAL_SRC))) \
 	$(patsubst %.pb.cc, $(OBJDIR)/%.pb.o, $(filter %.pb.cc, $(EVAL_SRC))) \
-	$(patsubst %.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(EVAL_SRC)))
+	$(patsubst %.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(EVAL_SRC))) \
+	$(patsubst %.cc, $(OBJDIR)/%.o, $(filter %.cc, $(CNTKLIBRARY_SRC)))
 
 EVAL_LIB:=$(LIBDIR)/lib$(EVAL).so
 ALL_LIBS+=$(EVAL_LIB)
@@ -693,7 +694,7 @@ $(EVAL_LIB): $(EVAL_OBJ) | $(CNTKMATH_LIB)
 	@echo $(SEPARATOR)
 	@mkdir -p $(dir $@)
 	@echo Building $(EVAL_LIB) for $(ARCH) with build type $(BUILDTYPE)
-	$(CXX) $(LDFLAGS) -shared $(patsubst %,-L%, $(LIBDIR) $(LIBPATH) $(GDK_NVML_LIB_PATH)) $(patsubst %,$(RPATH)%, $(ORIGINDIR) $(LIBPATH)) -o $@ $^ $(LIBS) -l$(CNTKMATH) -ldl $(lMULTIVERSO) $(PROTOBUF_PATH)/lib/libprotobuf.a
+	$(CXX) -DONNX_NAMESPACE=onnx -DONNX_ML=1 $(LDFLAGS) -shared $(patsubst %,-L%, $(LIBDIR) $(LIBPATH) $(GDK_NVML_LIB_PATH)) $(patsubst %,$(RPATH)%, $(ORIGINDIR) $(LIBPATH)) -o $@ $^ $(LIBS) -l$(CNTKMATH) -ldl $(lMULTIVERSO) $(PROTOBUF_PATH)/lib/libprotobuf.a
 
 ########################################
 # Eval Sample clients
@@ -1189,7 +1190,8 @@ CNTK_SRC+=$(SEQUENCE_TRAINING_LIB_SRC)
 CNTK_OBJ :=\
 	$(patsubst %.cu, $(OBJDIR)/%.o, $(filter %.cu, $(CNTK_SRC))) \
 	$(patsubst %.pb.cc, $(OBJDIR)/%.pb.o, $(filter %.pb.cc, $(CNTK_SRC))) \
-	$(patsubst %.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(CNTK_SRC)))
+	$(patsubst %.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(CNTK_SRC))) \
+	$(patsubst %.cc, $(OBJDIR)/%.o, $(filter %.cc, $(CNTKLIBRARY_SRC)))
 
 CNTK:=$(BINDIR)/cntk
 ALL+=$(CNTK)
@@ -1261,7 +1263,8 @@ UNITTEST_EVAL_SRC = \
 	$(SOURCEDIR)/../Tests/UnitTests/EvalTests/EvalExtendedTests.cpp \
 	$(SOURCEDIR)/../Tests/UnitTests/EvalTests/stdafx.cpp
 
-UNITTEST_EVAL_OBJ := $(patsubst %.cpp, $(OBJDIR)/%.o, $(UNITTEST_EVAL_SRC))
+UNITTEST_EVAL_OBJ := $(patsubst %.cpp, $(OBJDIR)/%.o, $(UNITTEST_EVAL_SRC)) \
+					 $(patsubst %.cc, $(OBJDIR)/%.o, $(filter %.cc, $(CNTKLIBRARY_SRC)))
 
 UNITTEST_EVAL := $(BINDIR)/evaltests
 
@@ -1328,7 +1331,8 @@ UNITTEST_NETWORK_SRC += $(SGDLIB_SRC)
 UNITTEST_NETWORK_OBJ :=\
 	$(patsubst %.cu, $(OBJDIR)/%.o, $(filter %.cu, $(UNITTEST_NETWORK_SRC))) \
 	$(patsubst %.pb.cc, $(OBJDIR)/%.pb.o, $(filter %.pb.cc, $(UNITTEST_NETWORK_SRC))) \
-	$(patsubst %.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(UNITTEST_NETWORK_SRC)))
+	$(patsubst %.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(UNITTEST_NETWORK_SRC))) \
+	$(patsubst %.cc, $(OBJDIR)/%.o, $(filter %.cc, $(CNTKLIBRARY_SRC)))
 
 UNITTEST_NETWORK := $(BINDIR)/networktests
 
@@ -1339,7 +1343,7 @@ $(UNITTEST_NETWORK): $(UNITTEST_NETWORK_OBJ) | $(READER_LIBS) $(CNTKTEXTFORMATRE
 	@echo $(SEPARATOR)
 	@mkdir -p $(dir $@)
 	@echo building $@ for $(ARCH) with build type $(BUILDTYPE)
-	$(CXX) $(LDFLAGS) $(patsubst %,-L%, $(LIBDIR) $(LIBPATH) $(GDK_NVML_LIB_PATH) $(BOOSTLIB_PATH)) $(patsubst %, $(RPATH)%, $(ORIGINLIBDIR) $(LIBPATH) $(BOOSTLIB_PATH)) -o $@ $^ $(BOOSTLIBS) $(LIBS) $(lMULTIVERSO) $(L_READER_LIBS) -ldl -fopenmp  $(PROTOBUF_PATH)/lib/libprotobuf.a  
+	$(CXX) -DONNX_NAMESPACE=onnx -DONNX_ML=1 $(LDFLAGS) $(patsubst %,-L%, $(LIBDIR) $(LIBPATH) $(GDK_NVML_LIB_PATH) $(BOOSTLIB_PATH)) $(patsubst %, $(RPATH)%, $(ORIGINLIBDIR) $(LIBPATH) $(BOOSTLIB_PATH)) -o $@ $^ $(BOOSTLIBS) $(LIBS) $(lMULTIVERSO) $(L_READER_LIBS) -ldl -fopenmp  $(PROTOBUF_PATH)/lib/libprotobuf.a  
 
 UNITTEST_MATH_SRC = \
 	$(SOURCEDIR)/../Tests/UnitTests/MathTests/BatchNormalizationEngineTests.cpp \
