@@ -15,6 +15,7 @@
 #include "ONNXToCNTK.h"
 
 using namespace CNTK;
+using namespace Microsoft::MSR::CNTK;
 
 namespace CNTK
 {
@@ -37,14 +38,14 @@ namespace CNTK
     {
         if (function->Inputs().size() == 0)
         {
-            cout << string(spaces, '.') + "(" + Microsoft::MSR::CNTK::ToString(useName ? function->Name() : function->Uid()) + ")" + Microsoft::MSR::CNTK::ToString(function->AsString()) << std::endl;
+            cout << string(spaces, '.') + "(" + ToLegacyString(ToUTF8(useName ? function->Name() : function->Uid())) + ")" + ToLegacyString(ToUTF8(function->AsString())) << std::endl;
             return;
         }
 
         for (auto input : function->Inputs())
         {
-            cout << string(spaces, '.') + "(" + Microsoft::MSR::CNTK::ToString(useName ? function->Name() : function->Uid()) + ")" + "->" +
-                        "(" + Microsoft::MSR::CNTK::ToString(useName ? input.Name() : input.Uid()) + ")" + Microsoft::MSR::CNTK::ToString(input.AsString())
+            cout << string(spaces, '.') + "(" + ToLegacyString(ToUTF8(useName ? function->Name() : function->Uid())) + ")" + "->" +
+                        "(" + ToLegacyString(ToUTF8(useName ? input.Name() : input.Uid())) + ")" + ToLegacyString(ToUTF8(input.AsString()))
                  << std::endl;
         }
 
@@ -65,7 +66,7 @@ void ONNXFormat::Save(const FunctionPtr& src, const std::wstring& filepath)
 #ifdef _WIN32
     ONNXIR::Model::Save(*model, filepath);
 #else
-    ONNXIR::Model::Save(*model, ToString(filepath));
+    ONNXIR::Model::Save(*model, ToLegacyString(ToUTF8(filepath)));
 #endif
 }
 
@@ -76,7 +77,7 @@ FunctionPtr ONNXFormat::Load(const std::wstring& filepath, const DeviceDescripto
 #ifdef _WIN32
     Status loadStatus = ONNXIR::Model::Load(filepath, &model);
 #else
-    Status loadStatus = ONNXIR::Model::Load(ToString(filepath), &model);
+    Status loadStatus = ONNXIR::Model::Load(ToLegacyString(ToUTF8(filepath)), &model);
 #endif
     if (!loadStatus.IsOK())
         LogicError("Failed to load model: '%s'", loadStatus.ErrorMessage().c_str());
