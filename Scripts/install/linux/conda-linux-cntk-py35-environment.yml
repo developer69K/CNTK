@@ -15,7 +15,7 @@ dependencies:
 - pandoc=1.15.0.6
 - pillow=3.4.2=py35_0
 - pip=8.1.2=py35_0
-- python=3.5.2=0
+- python=3.5.5=0
 - pyyaml=3.12=py35_0
 - scikit-image=0.12.3=np111py35_1
 - scikit-learn=0.18.1=np111py35_0
@@ -30,7 +30,7 @@ dependencies:
   - keras==2.0.6
   - pydot-ng==1.0.0
   - pygame==1.9.3
-  - pytest==3.0.3
+  - pytest==3.6.2
   - sphinx-rtd-theme==0.2.4
   - sphinx==1.5.4
   - nbsphinx==0.2.14
