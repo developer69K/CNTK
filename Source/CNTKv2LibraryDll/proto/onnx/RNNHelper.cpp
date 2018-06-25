@@ -17,6 +17,7 @@
 
 using namespace CNTK;
 using namespace CNTK::ONNX;
+using namespace Microsoft::MSR::CNTK;
 
 std::string MapActivationNameONNXToCNTK(const std::string &onnxOp)
 {
